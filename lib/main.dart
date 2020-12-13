@@ -1,65 +1,85 @@
 import 'package:flutter/material.dart';
+import './questionario.dart';
+import './resultado.dart';
 
-void main() {
-  runApp(MyApp());
-}
+main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
+  var _perguntaSelecionada = 0;
+  var _pontuacaoTotal = 0;
+
+  final _perguntas = const [
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'respostas': [
+        {'texto': 'Preto', 'pontuacao': 1},
+        {'texto': 'Vermelho', 'pontuacao': 2},
+        {'texto': 'Verde', 'pontuacao': 3},
+        {'texto': 'Branco', 'pontuacao': 4},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito?',
+      'respostas': [
+        {'texto': 'Coelho', 'pontuacao': 1},
+        {'texto': 'Cobra', 'pontuacao': 2},
+        {'texto': 'Elefante', 'pontuacao': 3},
+        {'texto': 'Leão', 'pontuacao': 4},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu instrutor favorito?',
+      'respostas': [
+        {'texto': 'Maria', 'pontuacao': 1},
+        {'texto': 'João', 'pontuacao': 2},
+        {'texto': 'Leo', 'pontuacao': 3},
+        {'texto': 'José', 'pontuacao': 4},
+      ],
+    },
+  ];
+
+  bool get isNext {
+    return _perguntaSelecionada < _perguntas.length;
+  }
+
+  void _responder(int pontuacao) {
+    if (isNext) {
+      setState(() {
+        _perguntaSelecionada++;
+        _pontuacaoTotal += pontuacao;
+      });
+    }
+    print(_pontuacaoTotal);
+  }
+
+  void _restartForm(String text) {
+    setState(() {
+      _perguntaSelecionada = 0;
+      _pontuacaoTotal = 0;
+    });
+
+    print(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Scaffold(
+          appBar: AppBar(
+            title: Text('My First App'),
+          ),
+          body: isNext
+              ? Questionario(
+                  perguntas: _perguntas,
+                  perguntaSelecionada: _perguntaSelecionada,
+                  responder: _responder)
+              : Resultado(_pontuacaoTotal, _restartForm)),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.access_time),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+class MyApp extends StatefulWidget {
+  _MyAppState createState() {
+    return _MyAppState();
   }
 }
